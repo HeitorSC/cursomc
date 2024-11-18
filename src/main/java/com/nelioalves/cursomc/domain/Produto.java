@@ -1,37 +1,44 @@
 package com.nelioalves.cursomc.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
 @Entity
-public class Categoria implements Serializable{
-    public static final Long serialVersionUID = 1L;
+public class Produto {
+    public static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
-    
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "categoria")
-    private List<Produto> produto = new ArrayList<>();
-    
+    private Double preco;
 
-    public Categoria(){
+    @JsonBackReference
+    @ManyToMany
+    @JoinTable(name = "PRODUTO_CATEGORIA",
+        joinColumns = @JoinColumn(name = "produto_id"),
+        inverseJoinColumns = @JoinColumn(name = "categoria_id")
+    )
+    private List<Categoria> categoria = new ArrayList<>();
 
+    public Produto(){
+        
     }
 
-    public Categoria(Integer id, String nome){
+    public Produto(Integer id, String nome, Double preco){
         this.id = id;
         this.nome = nome;
+        this.preco = preco;
     }
 
     public Integer getId(){
@@ -50,18 +57,20 @@ public class Categoria implements Serializable{
         this.nome = nome;
     }
 
-
-    public List<Produto> getProduto() {
-        return produto;
+    public Double getPreco(){
+        return preco;
     }
 
-    public void setProduto(List<Produto> produto) {
-        this.produto = produto;
+    public void setPreco(Double preco){
+        this.preco = preco;
     }
 
-    @Override
-    public String toString() {
-        return "Categoria [id=" + id + ", nome=" + nome + "]";
+    public List<Categoria> getCategoria(){
+        return categoria;
+    }
+
+    public void setCategoria(List<Categoria> categoria){
+        this.categoria = categoria;
     }
 
     @Override
@@ -80,7 +89,7 @@ public class Categoria implements Serializable{
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Categoria other = (Categoria) obj;
+        Produto other = (Produto) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -88,7 +97,4 @@ public class Categoria implements Serializable{
             return false;
         return true;
     }
-
-    
-
 }
